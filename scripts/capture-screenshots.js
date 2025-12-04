@@ -26,20 +26,27 @@ async function main() {
     await waitForData(page);
     await page.waitForTimeout(1500); // let layout settle
 
-    await captureSection(page, { text: "Heute bestellen" }, "01-heute-bestellen.png");
-    await captureSection(page, { text: "Top-Seller Monitor" }, "02-top-seller-monitor.png");
-    await captureSection(page, { text: "Modelle mit fehlenden Gr" }, "03-modelle-mit-luecken.png");
-    await captureSection(page, { text: "Detailanalyse" }, "04-detailanalyse-model-insights.png");
-
-    await page.getByRole("button", { name: "Reorder", exact: true }).click();
-    await page.waitForSelector("text=Top-Seller ohne Bestand");
-    const reorderSections = page.locator('section[aria-label="Reorder Recommendations"]');
-    await captureLocator(reorderSections.nth(0), "05-reorder-top-seller-oos.png");
-    await captureLocator(reorderSections.nth(1), "06-reorder-empfehlungen.png");
+    await captureFullPage(page, "01-top-seller.png");
 
     await page.getByRole("button", { name: "Modelle", exact: true }).click();
-    await page.waitForSelector("text=Model Insights");
-    await captureLocator(page.locator('section[aria-label="Model Insights"]'), "07-modelle-matrix.png");
+    await page.waitForTimeout(800);
+    await captureFullPage(page, "02-modelle.png");
+
+    await page.getByRole("button", { name: "Groessen & Leisten", exact: true }).click();
+    await page.waitForTimeout(800);
+    await captureFullPage(page, "03-groessen-leisten.png");
+
+    await page.getByRole("button", { name: "Farben", exact: true }).click();
+    await page.waitForTimeout(800);
+    await captureFullPage(page, "04-farben.png");
+
+    await page.getByRole("button", { name: "Bestellliste", exact: true }).click();
+    await page.waitForSelector("text=Empfohlene Nachbestellungen");
+    await captureFullPage(page, "05-bestellliste.png");
+
+    await page.getByRole("button", { name: "Steuerung", exact: true }).click();
+    await page.waitForSelector("text=Sortimentsstatus");
+    await captureFullPage(page, "06-steuerung.png");
   } finally {
     await browser.close();
     await stopServer();
@@ -84,6 +91,10 @@ async function uploadSampleCSVs(page) {
 async function captureSection(page, filter, fileName) {
   const section = page.locator("section").filter({ hasText: filter.text }).first();
   await captureLocator(section, fileName);
+}
+
+async function captureFullPage(page, fileName) {
+  await page.screenshot({ path: path.join(outDir, fileName), fullPage: true, timeout: 60000 });
 }
 
 async function captureLocator(locator, fileName) {
