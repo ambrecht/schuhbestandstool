@@ -150,16 +150,54 @@ function ModelMatrixBlock({ model }) {
                   {sizeHeaders.map((size) => {
                     const sizeEntry = entry.sizes.find((s) => s.size === size);
                     const qty = sizeEntry?.orderQty || "";
+                    const bestellmenge = formatOrderQty(qty);
+                    const metaSegments = [
+                      {
+                        label: "Bestand",
+                        value: formatNumber(sizeEntry?.stockQty),
+                        title: "Aktueller Bestand im Lager",
+                      },
+                      {
+                        label: "Meldebestand",
+                        value: formatDecimal(sizeEntry?.reorderPoint),
+                        title: "Berechneter Bestand, ab dem nachbestellt werden sollte (inkl. Sicherheitsbestand).",
+                      },
+                      {
+                        label: "Reichweite",
+                        value: formatDocLabel(sizeEntry?.daysOfCover, sizeEntry?.stockQty),
+                        title: "Geschaetzte Anzahl Tage, die der aktuelle Bestand bei aktueller Nachfrage noch reicht.",
+                      },
+                      {
+                        label: "Verkaeufe im Zeitraum",
+                        value: formatNumber(sizeEntry?.salesQty),
+                        title: "Verkaufte Menge im ausgewaehlten Zeitraum.",
+                      },
+                      {
+                        label: "Ø Paare/Tag",
+                        value: formatAvgDaily(sizeEntry?.avgDailySales),
+                        title: "Durchschnittlich verkaufte Paare pro Tag im Zeitraum.",
+                      },
+                      {
+                        label: "Letzter Verkauf",
+                        value: formatDateLocal(sizeEntry?.lastSaleDate),
+                        title: "Datum der letzten verkauften Einheit dieser Groesse in diesem Lager.",
+                      },
+                    ];
                     return (
                       <td key={size} style={cellStyle()}>
                         {qty ? (
                           <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                            <strong>{formatNumber(qty)}</strong>
+                            <strong title="Vom System empfohlene Nachbestellmenge fuer diese Groesse.">
+                              Bestellmenge: {bestellmenge}
+                            </strong>
                             <span style={metaText}>
-                              Bestand {formatNumber(sizeEntry?.stockQty)} · ROP {formatNumber(sizeEntry?.reorderPoint)} · DoC {formatDoc(sizeEntry?.daysOfCover)}
-                            </span>
-                            <span style={metaText}>
-                              Sales {formatNumber(sizeEntry?.salesQty)} · ⌀/Tag {formatNumber(sizeEntry?.avgDailySales)} · Letzter Verkauf {formatDate(sizeEntry?.lastSaleDate)}
+                              {metaSegments.map((seg, idx) => (
+                                <span key={seg.label} title={seg.title} style={{ display: "inline-flex", gap: "4px", alignItems: "center" }}>
+                                  <span style={{ fontWeight: 600 }}>{seg.label}:</span>
+                                  <span>{seg.value}</span>
+                                  {idx < metaSegments.length - 1 ? <span aria-hidden="true">·</span> : null}
+                                </span>
+                              ))}
                             </span>
                           </div>
                         ) : (
@@ -229,14 +267,43 @@ function formatNumber(value) {
   return typeof value === "number" ? value : Number(value);
 }
 
-function formatDoc(value) {
+function formatDecimal(value, decimals = 1) {
   if (value === null || value === undefined || Number.isNaN(value)) return "-";
-  return Math.round(value);
+  const num = Number(value);
+  if (!Number.isFinite(num)) return "-";
+  return num.toFixed(decimals);
 }
 
-function formatDate(value) {
+function formatAvgDaily(value) {
+  if (value === null || value === undefined || Number.isNaN(value)) return "-";
+  const num = Number(value);
+  if (!Number.isFinite(num)) return "-";
+  return num.toFixed(2);
+}
+
+function formatDocLabel(value, stockQty) {
+  if (value === null || value === undefined || Number.isNaN(value)) {
+    if (stockQty === 0) return "ausverkauft";
+    return "-";
+  }
+  const num = Math.round(value);
+  if (num <= 0) return "0 (ausverkauft)";
+  return `${num} Tage`;
+}
+
+function formatDateLocal(value) {
   if (!(value instanceof Date) || Number.isNaN(value.getTime())) return "-";
-  return value.toISOString().slice(0, 10);
+  try {
+    return value.toLocaleDateString("de-DE");
+  } catch (e) {
+    return value.toISOString().slice(0, 10);
+  }
+}
+
+function formatOrderQty(value) {
+  const num = Number(value);
+  if (!Number.isFinite(num)) return "-";
+  return `${num} Paar`;
 }
 
 function toNumberOrBlank(value) {
