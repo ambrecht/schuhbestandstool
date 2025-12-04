@@ -18,7 +18,10 @@ async function main() {
 
   const stopServer = await startDevServer();
   const browser = await chromium.launch({ headless: true });
-  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  const page = await browser.newPage({
+    viewport: { width: 1920, height: 1080 },
+    deviceScaleFactor: 2, // high-DPI for besser lesbare Screenshots
+  });
 
   try {
     await page.goto(baseURL, { waitUntil: "domcontentloaded" });
