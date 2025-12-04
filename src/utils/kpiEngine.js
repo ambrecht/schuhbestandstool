@@ -9,6 +9,7 @@ const CRITICAL_QTY_PER_SIZE = 2;
 const URGENT_DOC_THRESHOLD = 5;
 const STALE_MONTHS = 18;
 const MIN_REORDER_POINT_THRESHOLD = 1;
+const DEMAND_LOOKBACK_DAYS = 30;
 
 // KPI engine: merges inventory and sales data per SKU and derives core metrics.
 // Optional daysInPeriodOverride allows a global Zeitraum-Selector to control the window
@@ -19,6 +20,8 @@ export function calculateKpis({ inventory, sales, allSales, daysInPeriodOverride
 
   const salesBySku = groupSalesBySku(salesList);
   const historicalSalesBySku = buildHistoricalSalesBySku(allSales, periodEnd);
+  const demandWindow = buildDemandWindow(periodEnd, allSales);
+  const demandSalesBySku = groupSalesBySkuWithin(allSales, demandWindow.start, demandWindow.end);
 
   const existingSkus = new Set();
 
@@ -36,6 +39,7 @@ export function calculateKpis({ inventory, sales, allSales, daysInPeriodOverride
     const stockQty = normalizeNumber(item?.bestand) ?? 0;
 
     const salesInfo = salesBySku.get(sku) || { salesQty: 0, firstDate: null, lastDate: null };
+    const demandInfo = demandSalesBySku.get(sku) || { salesQty: 0 };
     return buildKpiRecord({
       sku,
       artikel,
@@ -48,8 +52,10 @@ export function calculateKpis({ inventory, sales, allSales, daysInPeriodOverride
       stockQty,
       policy,
       salesInfo,
+      demandInfo,
       historicalInfo: historicalSalesBySku.get(sku),
       daysInPeriodOverride,
+      demandDaysOverride: demandWindow.daysInPeriod,
       periodEnd,
     });
   });
@@ -63,6 +69,7 @@ export function calculateKpis({ inventory, sales, allSales, daysInPeriodOverride
     const groesse = salesInfo.groesse || "";
     const qualitaet = salesInfo.qualitaet || "";
     const lager = salesInfo.lager || "";
+    const demandInfo = demandSalesBySku.get(sku) || { salesQty: 0 };
     kpis.push(
       buildKpiRecord({
         sku,
@@ -76,8 +83,10 @@ export function calculateKpis({ inventory, sales, allSales, daysInPeriodOverride
         stockQty: 0,
         policy: "normal",
         salesInfo,
+        demandInfo,
         historicalInfo: historicalSalesBySku.get(sku),
         daysInPeriodOverride,
+        demandDaysOverride: demandWindow.daysInPeriod,
         periodEnd,
       }),
     );
@@ -97,9 +106,11 @@ function buildKpiRecord({
   kategorie,
   stockQty,
   salesInfo,
+  demandInfo,
   policy = "normal",
   historicalInfo,
   daysInPeriodOverride,
+  demandDaysOverride,
   periodEnd,
 }) {
   const salesQty = salesInfo.salesQty ?? 0;
@@ -107,7 +118,9 @@ function buildKpiRecord({
     MIN_PERIOD_DAYS,
     daysInPeriodOverride ?? computeDaysInPeriod(salesInfo.firstDate, salesInfo.lastDate),
   );
-  const avgDailySales = salesQty > 0 ? salesQty / daysInPeriod : 0;
+  const demandDays = Math.max(1, demandDaysOverride ?? DEMAND_LOOKBACK_DAYS);
+  const salesQtyDemand = demandInfo?.salesQty ?? 0;
+  const avgDailySales = salesQtyDemand > 0 ? salesQtyDemand / demandDays : 0;
   const avgMonthlySales = avgDailySales * 30;
 
   const denominator = salesQty + stockQty;
@@ -164,8 +177,10 @@ function buildKpiRecord({
     policy,
     bestand: stockQty,
     verkaufteMengeTotal: salesQty,
+    salesQtyDemand,
     stockQty,
     daysInPeriod,
+    demandDays,
     avgDailySales,
     avgMonthlySales,
     sellThrough,
@@ -352,4 +367,58 @@ function deriveStatusKey({ salesQtyPeriod, stockQty, needsReorder, isUrgent, isL
   if (isLowStock) return "LOW";
   if (isHistoricalSku) return "OOS_INACTIVE";
   return "OK";
+}
+
+function buildDemandWindow(periodEnd, allSales) {
+  const end = periodEnd instanceof Date && !Number.isNaN(periodEnd.getTime()) ? periodEnd : new Date();
+  const start = new Date(end.getTime());
+  start.setDate(start.getDate() - (DEMAND_LOOKBACK_DAYS - 1));
+
+  // clamp to earliest sale date if available
+  let earliest = null;
+  if (Array.isArray(allSales)) {
+    for (const sale of allSales) {
+      const d = toValidDate(sale?.datum);
+      if (!d) continue;
+      if (!earliest || d < earliest) earliest = d;
+    }
+  }
+  const boundedStart = earliest && start < earliest ? earliest : start;
+  return {
+    start: boundedStart,
+    end,
+    daysInPeriod: computeDaysInPeriod(boundedStart, end),
+  };
+}
+
+function groupSalesBySkuWithin(salesList, windowStart, windowEnd) {
+  const map = new Map();
+  if (!Array.isArray(salesList)) return map;
+  const startTime = windowStart instanceof Date ? windowStart.getTime() : null;
+  const endTime = windowEnd instanceof Date ? windowEnd.getTime() : null;
+
+  for (const sale of salesList) {
+    const datum = toValidDate(sale?.datum);
+    if (!datum) continue;
+    const t = datum.getTime();
+    if (startTime !== null && t < startTime) continue;
+    if (endTime !== null && t > endTime) continue;
+
+    const artikel = normalizeKeyPart(sale?.artikel);
+    const variante = normalizeKeyPart(sale?.variante);
+    const leiste = normalizeKeyPart(sale?.leiste);
+    const groesse = normalizeKeyPart(sale?.groesse);
+    const qualitaet = normalizeKeyPart(sale?.qualitaet);
+    const lager = normalizeKeyPart(sale?.lager);
+    const sku = normalizeText(sale?.sku) || buildSkuKey({ artikel, variante, leiste, groesse, qualitaet, lager });
+    if (!sku || !artikel || !variante || !leiste || !groesse || !lager) continue;
+
+    const menge = normalizeNumber(sale?.menge);
+    if (menge === null) continue;
+
+    const current = map.get(sku) || { salesQty: 0 };
+    map.set(sku, { ...current, salesQty: current.salesQty + menge });
+  }
+
+  return map;
 }

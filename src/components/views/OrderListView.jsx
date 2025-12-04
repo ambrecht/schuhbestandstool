@@ -68,6 +68,10 @@ function OrderListView({ suggestions, periodLabel }) {
           <div style={eyebrow}>Bestellliste</div>
           <h2 style={titleStyle}>Empfohlene Nachbestellungen</h2>
           <div style={subtleText}>Zeitraum: {periodLabel || "gewaehlter Zeitraum"}</div>
+          <div style={subtleText}>
+            Hinweis: Bestellvorschlaege basieren auf der durchschnittlichen Nachfrage der letzten 30 Tage.
+            Die ausgewaehlte Periode beeinflusst die KPI-Anzeige, nicht den Meldebestand.
+          </div>
         </div>
         <div style={{ display: "flex", gap: "8px" }}>
           <button type="button" onClick={handleCsvExport} style={linkButtonStyle}>
