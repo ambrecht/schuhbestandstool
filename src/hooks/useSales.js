@@ -1,5 +1,12 @@
 import { useMemo } from "react";
-import { buildSku, normalizeNumber, normalizeSize, normalizeText } from "../utils/normalization";
+import {
+  buildSkuKey,
+  normalizeGroesseSales,
+  normalizeKeyPart,
+  normalizeNumber,
+  normalizeText,
+  parseGermanPrice,
+} from "../utils/normalization";
 
 // Transforms raw sales CSV rows into the internal structure without mutating input.
 export function useSales(rawSalesData) {
@@ -21,14 +28,35 @@ function mapSalesRow(row) {
     return null;
   }
 
-  const artikel = normalizeText(getField(row, ["artikel", "ARTIKEL"]));
-  const variante = normalizeText(getField(row, ["variante", "VARIANTE"]));
-  const leiste = normalizeText(getField(row, ["leiste", "LEISTE"]));
-  const groesse = normalizeSize(row);
-  const menge = normalizeNumber(getField(row, ["menge", "Menge"]));
-  const datum = toDateValue(getField(row, ["änderungsdatum", "aenderungsdatum", "datum", "Datum"]));
+  const status = normalizeKeyPart(getField(row, ["status", "Status"]));
+  if (status && status !== "ABGESCHLOSSEN") return null;
 
-  const sku = buildSku({ artikel, variante, leiste, groesse });
+  const kategorie = normalizeKeyPart(getField(row, ["kategorie", "Kategorie"]));
+  if (kategorie && kategorie !== "SCHUH") return null;
+
+  const artikel = normalizeKeyPart(getField(row, ["artikel", "ARTIKEL"]));
+  const variante = normalizeKeyPart(getField(row, ["variante", "VARIANTE"]));
+  const leiste = normalizeKeyPart(getField(row, ["leiste", "LEISTE"]));
+  const groesse = normalizeGroesseSales(getField(row, ["groesse", "Groesse", "GROESSE"]));
+  const qualitaet = normalizeKeyPart(getField(row, ["qualitaet", "qualitt", "QUALITAET"]));
+  const lager = normalizeKeyPart(getField(row, ["lager", "Lager"]));
+  if (!artikel || !variante || !leiste || !groesse || !lager) {
+    return null;
+  }
+
+  const anmerkung = normalizeText(getField(row, ["anmerkung", "Anmerkung"]));
+  const anmerkungUpper = normalizeKeyPart(anmerkung);
+  if (["FLOHMARKT", "SPENDE"].some((kw) => anmerkungUpper.includes(kw))) return null;
+  if (anmerkungUpper.includes("TRANSFER") && !anmerkungUpper.includes("KUNDE")) return null;
+
+  const typ = normalizeKeyPart(getField(row, ["typ", "Typ"]));
+  if (typ && typ.includes("TRANSFER") && !typ.includes("KUNDE")) return null;
+
+  const menge = normalizeNumber(getField(row, ["menge", "Menge"]));
+  const datum = toDateValue(getField(row, ["ادnderungsdatum", "aenderungsdatum", "datum", "Datum"]));
+  const verkaufspreis = parseGermanPrice(getField(row, ["verkaufspreis", "Verkaufspreis"]));
+
+  const sku = buildSkuKey({ artikel, variante, leiste, groesse, qualitaet, lager });
 
   return {
     sku,
@@ -36,8 +64,15 @@ function mapSalesRow(row) {
     variante,
     leiste,
     groesse,
+    qualitaet,
+    lager,
     menge: menge ?? 0,
     datum,
+    verkaufspreis,
+    kategorie,
+    status,
+    anmerkung,
+    typ,
   };
 }
 

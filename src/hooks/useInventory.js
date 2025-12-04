@@ -1,5 +1,12 @@
 import { useMemo } from "react";
-import { normalizeNumber, normalizeSize, normalizeText, buildSku } from "../utils/normalization";
+import {
+  buildSkuKey,
+  normalizeGroesseInventory,
+  normalizeKeyPart,
+  normalizeNumber,
+  normalizeText,
+  parseGermanPrice,
+} from "../utils/normalization";
 
 // Transforms raw inventory CSV rows into the internal structure without mutating input.
 export function useInventory(rawInventoryData) {
@@ -23,14 +30,21 @@ function mapInventoryRow(row) {
     return null;
   }
 
-  const artikel = normalizeText(getField(row, ["artikel", "ARTIKEL"]));
-  const variante = normalizeText(getField(row, ["variante", "VARIANTE"]));
-  const leiste = normalizeText(getField(row, ["leiste", "LEISTE"]));
-  const groesse = normalizeSize(row);
+  const artikel = normalizeKeyPart(getField(row, ["artikel", "ARTIKEL"]));
+  const variante = normalizeKeyPart(getField(row, ["variante", "VARIANTE"]));
+  const leiste = normalizeKeyPart(getField(row, ["leiste", "LEISTE"]));
+  const groesse = normalizeGroesseInventory(getField(row, ["groesse", "Groesse", "GROESSE"]));
+  const qualitaet = normalizeKeyPart(getField(row, ["qualitaet", "qualitt", "QUALITAET"]));
+  const lager = normalizeKeyPart(getField(row, ["lager", "Lager"]));
   const bestand = normalizeNumber(getField(row, ["bestand", "Bestand"]));
   const bestandseinheit = normalizeText(getField(row, ["bestandseinheit", "Bestandseinheit"]));
+  const grosshandelspreis = parseGermanPrice(getField(row, ["grohandelspreis", "Grosshandelspreis", "Gro\u00dfhandelspreis"]));
 
-  const sku = buildSku({ artikel, variante, leiste, groesse });
+  if (!artikel || !variante || !leiste || !groesse || !lager) {
+    return null;
+  }
+
+  const sku = buildSkuKey({ artikel, variante, leiste, groesse, qualitaet, lager });
 
   return {
     sku,
@@ -38,8 +52,11 @@ function mapInventoryRow(row) {
     variante,
     leiste,
     groesse,
+    qualitaet,
+    lager,
     bestand: bestand ?? 0,
     bestandseinheit,
+    grosshandelspreis,
   };
 }
 

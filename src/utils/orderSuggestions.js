@@ -62,12 +62,15 @@ export function buildOrderSuggestions(kpis, options = {}) {
     includedSkus.push({ ...numbers, orderQty, kpi });
 
     const model = kpi.artikel || "Unbekannt";
+    const lager = kpi.lager || "Unbekannt";
     const variant = kpi.variante || "Unbekannt";
     const last = kpi.leiste || "Unbekannt";
     const size = kpi.groesse || "Unbekannt";
 
-    const entry = models.get(model) || {
+    const key = `${model}::${lager}`;
+    const entry = models.get(key) || {
       model,
+      lager,
       variants: new Map(),
       totalOrderQty: 0,
       hasTopSeller: false,
@@ -83,7 +86,29 @@ export function buildOrderSuggestions(kpis, options = {}) {
         stockQty: numbers.stockQty,
         reorderPoint: numbers.reorderPoint,
       };
-    lastEntry.sizes.set(size, (lastEntry.sizes.get(size) || 0) + orderQty);
+
+    const sizeData =
+      lastEntry.sizes.get(size) || {
+        size,
+        orderQty: 0,
+        stockQty: numbers.stockQty,
+        salesQty: numbers.salesQtyPeriod,
+        avgDailySales: kpi.avgDailySales ?? 0,
+        daysOfCover: kpi.daysOfCover ?? null,
+        reorderPoint: numbers.reorderPoint,
+        lastSaleDate: kpi.lastSaleDate ?? null,
+        priority: kpi?.reason?.type || (kpi?.isUrgent ? "urgent" : kpi?.isLowStock ? "priority" : "monitor"),
+      };
+    sizeData.orderQty += orderQty;
+    sizeData.stockQty = numbers.stockQty;
+    sizeData.salesQty = numbers.salesQtyPeriod;
+    sizeData.avgDailySales = kpi.avgDailySales ?? sizeData.avgDailySales;
+    sizeData.daysOfCover = kpi.daysOfCover ?? sizeData.daysOfCover;
+    sizeData.reorderPoint = numbers.reorderPoint;
+    sizeData.lastSaleDate = kpi.lastSaleDate ?? sizeData.lastSaleDate;
+    sizeData.priority = kpi?.reason?.type || sizeData.priority;
+    lastEntry.sizes.set(size, sizeData);
+
     lastEntry.orderQty += orderQty;
     lastEntry.statusKey = kpi.statusKey || lastEntry.statusKey;
     lastEntry.salesQty = (lastEntry.salesQty || 0) + numbers.salesQtyPeriod;
@@ -95,7 +120,7 @@ export function buildOrderSuggestions(kpis, options = {}) {
     entry.totalOrderQty += orderQty;
     entry.hasTopSeller = entry.hasTopSeller || kpi.isTopSeller === true;
 
-    models.set(model, entry);
+    models.set(key, entry);
   });
 
   pipelineStats.finalSuggestions = includedSkus.length;
@@ -116,15 +141,14 @@ export function buildOrderSuggestions(kpis, options = {}) {
 
   return Array.from(models.values()).map((model) => ({
     model: model.model,
+    lager: model.lager,
     totalOrderQty: model.totalOrderQty,
     hasTopSeller: model.hasTopSeller,
     variants: Array.from(model.variants.entries()).map(([variant, lastMap]) => ({
       variant,
       leiste: Array.from(lastMap.entries()).map(([last, data]) => ({
         last,
-        sizes: Array.from(data.sizes.entries())
-          .map(([size, qty]) => ({ size, orderQty: qty }))
-          .filter((s) => s.orderQty > 0),
+        sizes: Array.from(data.sizes.values()).filter((s) => s.orderQty > 0),
         orderQty: data.orderQty,
         statusKey: data.statusKey,
       })),

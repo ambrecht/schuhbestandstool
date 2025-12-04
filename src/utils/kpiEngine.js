@@ -1,4 +1,4 @@
-import { buildSku, normalizeNumber, normalizeText } from "./normalization.js";
+import { buildSkuKey, normalizeKeyPart, normalizeNumber, normalizeText } from "./normalization.js";
 
 const LEAD_TIME_DAYS = 14;
 const SAFETY_FACTOR = 0.5;
@@ -8,7 +8,7 @@ const TOP_SELLER_LIMIT = 100;
 const CRITICAL_QTY_PER_SIZE = 2;
 const URGENT_DOC_THRESHOLD = 5;
 const STALE_MONTHS = 18;
-const MIN_REORDER_POINT_THRESHOLD = 0.5;
+const MIN_REORDER_POINT_THRESHOLD = 1;
 
 // KPI engine: merges inventory and sales data per SKU and derives core metrics.
 // Optional daysInPeriodOverride allows a global Zeitraum-Selector to control the window
@@ -23,11 +23,13 @@ export function calculateKpis({ inventory, sales, allSales, daysInPeriodOverride
   const existingSkus = new Set();
 
   const kpis = inventoryList.map((item) => {
-    const artikel = normalizeText(item?.artikel);
-    const variante = normalizeText(item?.variante);
-    const leiste = normalizeText(item?.leiste);
-    const groesse = normalizeText(item?.groesse);
-    const sku = normalizeText(item?.sku) || buildSku({ artikel, variante, leiste, groesse });
+    const artikel = normalizeKeyPart(item?.artikel);
+    const variante = normalizeKeyPart(item?.variante);
+    const leiste = normalizeKeyPart(item?.leiste);
+    const groesse = normalizeKeyPart(item?.groesse);
+    const qualitaet = normalizeKeyPart(item?.qualitaet);
+    const lager = normalizeKeyPart(item?.lager);
+    const sku = normalizeText(item?.sku) || buildSkuKey({ artikel, variante, leiste, groesse, qualitaet, lager });
     existingSkus.add(sku);
     const kategorie = normalizeText(item?.kategorie);
     const policy = normalizeText(item?.policy) || "normal";
@@ -40,6 +42,8 @@ export function calculateKpis({ inventory, sales, allSales, daysInPeriodOverride
       variante,
       leiste,
       groesse,
+      qualitaet,
+      lager,
       kategorie,
       stockQty,
       policy,
@@ -57,6 +61,8 @@ export function calculateKpis({ inventory, sales, allSales, daysInPeriodOverride
     const variante = salesInfo.variante || "";
     const leiste = salesInfo.leiste || "";
     const groesse = salesInfo.groesse || "";
+    const qualitaet = salesInfo.qualitaet || "";
+    const lager = salesInfo.lager || "";
     kpis.push(
       buildKpiRecord({
         sku,
@@ -64,6 +70,8 @@ export function calculateKpis({ inventory, sales, allSales, daysInPeriodOverride
         variante,
         leiste,
         groesse,
+        qualitaet,
+        lager,
         kategorie: "",
         stockQty: 0,
         policy: "normal",
@@ -84,6 +92,8 @@ function buildKpiRecord({
   variante,
   leiste,
   groesse,
+  qualitaet,
+  lager,
   kategorie,
   stockQty,
   salesInfo,
@@ -148,6 +158,8 @@ function buildKpiRecord({
     variante,
     leiste,
     groesse,
+    qualitaet,
+    lager,
     kategorie,
     policy,
     bestand: stockQty,
@@ -183,8 +195,14 @@ function groupSalesBySku(salesList) {
   const map = new Map();
 
   for (const sale of salesList) {
-    const sku = normalizeText(sale?.sku);
-    if (!sku) continue;
+    const artikel = normalizeKeyPart(sale?.artikel);
+    const variante = normalizeKeyPart(sale?.variante);
+    const leiste = normalizeKeyPart(sale?.leiste);
+    const groesse = normalizeKeyPart(sale?.groesse);
+    const qualitaet = normalizeKeyPart(sale?.qualitaet);
+    const lager = normalizeKeyPart(sale?.lager);
+    const sku = normalizeText(sale?.sku) || buildSkuKey({ artikel, variante, leiste, groesse, qualitaet, lager });
+    if (!sku || !artikel || !variante || !leiste || !groesse || !lager) continue;
 
     const menge = normalizeNumber(sale?.menge);
     if (menge === null) continue;
@@ -194,10 +212,12 @@ function groupSalesBySku(salesList) {
       salesQty: 0,
       firstDate: null,
       lastDate: null,
-      artikel: normalizeText(sale?.artikel),
-      variante: normalizeText(sale?.variante),
-      leiste: normalizeText(sale?.leiste),
-      groesse: normalizeText(sale?.groesse),
+      artikel,
+      variante,
+      leiste,
+      groesse,
+      qualitaet,
+      lager,
     };
 
     const salesQty = current.salesQty + menge;
@@ -224,8 +244,14 @@ function buildHistoricalSalesBySku(allSales, periodEnd) {
   windowStart.setMonth(windowStart.getMonth() - 12);
 
   for (const sale of allSales) {
-    const sku = normalizeText(sale?.sku);
-    if (!sku) continue;
+    const artikel = normalizeKeyPart(sale?.artikel);
+    const variante = normalizeKeyPart(sale?.variante);
+    const leiste = normalizeKeyPart(sale?.leiste);
+    const groesse = normalizeKeyPart(sale?.groesse);
+    const qualitaet = normalizeKeyPart(sale?.qualitaet);
+    const lager = normalizeKeyPart(sale?.lager);
+    const sku = normalizeText(sale?.sku) || buildSkuKey({ artikel, variante, leiste, groesse, qualitaet, lager });
+    if (!sku || !artikel || !variante || !leiste || !groesse || !lager) continue;
 
     const menge = normalizeNumber(sale?.menge);
     if (menge === null) continue;

@@ -22,6 +22,7 @@ function OrderListView({ suggestions, periodLabel }) {
   const handleCsvExport = () => {
     const header = [
       "Modell",
+      "Lager",
       "Farbe",
       "Leiste",
       "Groesse",
@@ -35,6 +36,7 @@ function OrderListView({ suggestions, periodLabel }) {
       csvData.map((row) =>
         [
           row.model,
+          row.lager,
           row.variant,
           row.last,
           row.size,
@@ -93,7 +95,9 @@ function OrderListView({ suggestions, periodLabel }) {
           <div key={model.model} style={cardStyle}>
             <div style={cardHeader}>
               <div style={{ fontWeight: 800 }}>{model.model}</div>
-              <div style={{ color: "#6b7280" }}>{model.totalOrderQty} Paare nachbestellen</div>
+              <div style={{ color: "#6b7280" }}>
+                Lager: {model.lager || "-"} · {model.totalOrderQty} Paare nachbestellen
+              </div>
             </div>
             <ModelMatrixBlock model={model} />
           </div>
@@ -146,7 +150,23 @@ function ModelMatrixBlock({ model }) {
                   {sizeHeaders.map((size) => {
                     const sizeEntry = entry.sizes.find((s) => s.size === size);
                     const qty = sizeEntry?.orderQty || "";
-                    return <td key={size} style={cellStyle()}>{qty ? formatNumber(qty) : ""}</td>;
+                    return (
+                      <td key={size} style={cellStyle()}>
+                        {qty ? (
+                          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                            <strong>{formatNumber(qty)}</strong>
+                            <span style={metaText}>
+                              Bestand {formatNumber(sizeEntry?.stockQty)} · ROP {formatNumber(sizeEntry?.reorderPoint)} · DoC {formatDoc(sizeEntry?.daysOfCover)}
+                            </span>
+                            <span style={metaText}>
+                              Sales {formatNumber(sizeEntry?.salesQty)} · ⌀/Tag {formatNumber(sizeEntry?.avgDailySales)} · Letzter Verkauf {formatDate(sizeEntry?.lastSaleDate)}
+                            </span>
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                      </td>
+                    );
                   })}
                   <td style={{ ...cellStyle(), fontWeight: 700 }}>{formatNumber(rowTotal)}</td>
                 </tr>
@@ -169,6 +189,7 @@ function buildCsvRows(models) {
           .forEach((sizeEntry) => {
             rows.push({
               model: model.model,
+              lager: model.lager,
               variant: variant.variant,
               last: entry.last,
               size: sizeEntry.size,
@@ -206,6 +227,16 @@ function pickStatusColor(statusKey) {
 function formatNumber(value) {
   if (value === null || value === undefined || Number.isNaN(value)) return "-";
   return typeof value === "number" ? value : Number(value);
+}
+
+function formatDoc(value) {
+  if (value === null || value === undefined || Number.isNaN(value)) return "-";
+  return Math.round(value);
+}
+
+function formatDate(value) {
+  if (!(value instanceof Date) || Number.isNaN(value.getTime())) return "-";
+  return value.toISOString().slice(0, 10);
 }
 
 function toNumberOrBlank(value) {
@@ -277,6 +308,7 @@ const rowStyle = {
   borderTop: "1px solid #e5e7eb",
 };
 const emptyStyle = { padding: "12px", border: "1px dashed #d1d5db", color: "#6b7280", borderRadius: "8px" };
+const metaText = { fontSize: "11px", color: "#6b7280" };
 
 export default OrderListView;
 

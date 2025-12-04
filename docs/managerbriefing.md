@@ -10,6 +10,7 @@
 - Normalisierung: Bereinigung (BOM/Zero-Width/Leerzeichen), Zahl-/Datums-Parsen (inkl. deutsches Datum), Groessen-Mapping, SKU-Bau `artikel|variante|leiste|groesse`.
 - Zeitraum: Standard „Letzte 30 Tage“, wenn der Datensatz lang ist; sonst der CSV-Zeitraum. Saison-Presets (Sommer/Winter) und freie Datumswahl vorhanden.
 - Zubehoer-Filter: Zubehoer (z. B. Schuhbaender) wird aus KPI-Ansichten gefiltert, damit die Bestelllogik auf Schuhe fokussiert bleibt.
+- SkuKey: Einheitliche ID `ARTIKEL|VARIANTE|LEISTE|GROESSE|QUALITAET|LAGER` (Uppercase) fuer Inventory & Sales; Sales-Filter auf `Status=Abgeschlossen`, `Kategorie=Schuh`, keine Flohmarkt/Spende/Transfer-ohne-Kunde-Zeilen.
 
 ## Kennzahlen & Schwellen (pro SKU)
 - Sales-Fenster: min. 30 Tage oder gewaehlter Zeitraum; `avgDailySales = salesQty / days`.
