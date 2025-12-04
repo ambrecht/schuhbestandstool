@@ -143,9 +143,10 @@ function buildKpiRecord({
   const isUrgent = (daysOfCover !== null && daysOfCover < URGENT_DOC_THRESHOLD) || isCriticalQty;
   const isSlowMover = avgDailySales < 0.1 && stockQty > 0;
 
-  const historical = historicalInfo || { salesQtyLast12M: 0, lastSaleDate: null, salesQtyLifetime: 0 };
+  const historical = historicalInfo || { salesQtyLast12M: 0, salesQtyLast24M: 0, lastSaleDate: null, salesQtyLifetime: 0 };
   const lastSaleDate = pickLater(salesInfo.lastDate, historical.lastSaleDate) || null;
   const salesQtyLast12M = Number.isFinite(historical.salesQtyLast12M) ? historical.salesQtyLast12M : 0;
+  const salesQtyLast24M = Number.isFinite(historical.salesQtyLast24M) ? historical.salesQtyLast24M : 0;
   const salesQtyLifetime = Number.isFinite(historical.salesQtyLifetime) ? historical.salesQtyLifetime : 0;
   const staleThreshold = buildStaleThreshold(periodEnd || new Date(), STALE_MONTHS);
   const isHistoricalSku =
@@ -194,6 +195,7 @@ function buildKpiRecord({
     lastSaleDate,
     salesQtyPeriod: salesQty,
     salesQtyLast12M,
+    salesQtyLast24M,
     salesQtyLifetime,
     isHistoricalSku,
     isRelevantForMatrix,
@@ -255,8 +257,10 @@ function buildHistoricalSalesBySku(allSales, periodEnd) {
   if (!Array.isArray(allSales)) return map;
 
   const windowEnd = periodEnd instanceof Date && !Number.isNaN(periodEnd.getTime()) ? periodEnd : new Date();
-  const windowStart = new Date(windowEnd.getTime());
-  windowStart.setMonth(windowStart.getMonth() - 12);
+  const windowStart12 = new Date(windowEnd.getTime());
+  windowStart12.setMonth(windowStart12.getMonth() - 12);
+  const windowStart24 = new Date(windowEnd.getTime());
+  windowStart24.setMonth(windowStart24.getMonth() - 24);
 
   for (const sale of allSales) {
     const artikel = normalizeKeyPart(sale?.artikel);
@@ -272,18 +276,22 @@ function buildHistoricalSalesBySku(allSales, periodEnd) {
     if (menge === null) continue;
 
     const datum = toValidDate(sale?.datum);
-    const current = map.get(sku) || { salesQtyLast12M: 0, lastSaleDate: null, salesQtyLifetime: 0 };
+    const current =
+      map.get(sku) || { salesQtyLast12M: 0, salesQtyLast24M: 0, lastSaleDate: null, salesQtyLifetime: 0 };
 
-    let { salesQtyLast12M, lastSaleDate, salesQtyLifetime } = current;
+    let { salesQtyLast12M, salesQtyLast24M, lastSaleDate, salesQtyLifetime } = current;
     salesQtyLifetime += menge;
     if (datum) {
       lastSaleDate = pickLater(lastSaleDate, datum);
-      if (datum >= windowStart && datum <= windowEnd) {
+      if (datum >= windowStart12 && datum <= windowEnd) {
         salesQtyLast12M += menge;
+      }
+      if (datum >= windowStart24 && datum <= windowEnd) {
+        salesQtyLast24M += menge;
       }
     }
 
-    map.set(sku, { salesQtyLast12M, lastSaleDate, salesQtyLifetime });
+    map.set(sku, { salesQtyLast12M, salesQtyLast24M, lastSaleDate, salesQtyLifetime });
   }
 
   return map;

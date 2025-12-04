@@ -7,12 +7,14 @@ import ModelMatrixView from "../components/views/ModelMatrixView";
 import SizeLastView from "../components/views/SizeLastView";
 import ColorView from "../components/views/ColorView";
 import OrderListView from "../components/views/OrderListView";
+import LifecycleView from "../components/views/LifecycleView";
 import { useFileUploads } from "../hooks/useFileUploads";
 import { useInventory } from "../hooks/useInventory";
 import { useSales } from "../hooks/useSales";
 import { calculateKpis } from "../utils/kpiEngine";
 import { buildModelInsights } from "../utils/modelInsightsEngine";
 import { filterNonAccessories } from "../utils/selectors";
+import { computeLifecycleData } from "../utils/lifecycle";
 import {
   buildTopSellerRows,
   collectTopSellerSkuSet,
@@ -130,6 +132,7 @@ function Dashboard() {
       }),
     [kpis, effectivePeriod],
   );
+  const lifecycleData = useMemo(() => computeLifecycleData(kpis, orderSuggestions), [kpis, orderSuggestions]);
 
   const [activeSection, setActiveSection] = useState("topSeller");
   const [focusFilters, setFocusFilters] = useState({});
@@ -195,6 +198,8 @@ function Dashboard() {
         {activeSection === "orders" && (
           <OrderListView suggestions={orderSuggestions} periodLabel={periodLabel} />
         )}
+
+        {activeSection === "steering" && <LifecycleView data={lifecycleData} />}
 
         <DevPanel title="CSV Upload">
           <CSVUpload

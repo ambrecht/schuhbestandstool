@@ -5,6 +5,7 @@ function SectionNav({ activeSection, onChange }) {
     { key: "sizes", label: "Groessen & Leisten" },
     { key: "colors", label: "Farben" },
     { key: "orders", label: "Bestellliste" },
+    { key: "steering", label: "Steuerung" },
   ];
 
   return (
