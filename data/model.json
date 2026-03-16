@@ -1,0 +1,607 @@
+[
+  {
+    "canonicalModel": "Bronco",
+    "season": "winter",
+    "articles": ["Bronca", "Bronco"]
+  },
+  {
+    "canonicalModel": "Eisbär",
+    "season": "winter",
+    "articles": ["W4tler Eisbär"]
+  },
+  {
+    "canonicalModel": "Eiswind",
+    "season": "winter",
+    "articles": ["Eiswind"]
+  },
+  {
+    "canonicalModel": "Flexwind",
+    "season": "winter",
+    "articles": ["Flexwind"]
+  },
+  {
+    "canonicalModel": "G10 Nie mehr kalt",
+    "season": "winter",
+    "articles": ["G10 Nie mehr kalt"]
+  },
+  {
+    "canonicalModel": "GGG Art 10",
+    "season": "winter",
+    "articles": ["GGG Art 10"]
+  },
+  {
+    "canonicalModel": "GGG Art 9",
+    "season": "winter",
+    "articles": ["GGG Art 9"]
+  },
+  {
+    "canonicalModel": "GGG Pony",
+    "season": "winter",
+    "articles": ["GGG Pony"]
+  },
+  {
+    "canonicalModel": "GGG Wüdling",
+    "season": "winter",
+    "articles": ["GGG Wüdling"]
+  },
+  {
+    "canonicalModel": "GN Winterstiefel",
+    "season": "winter",
+    "articles": ["GN Winterstiefel"]
+  },
+  {
+    "canonicalModel": "Nordpol",
+    "season": "winter",
+    "articles": ["Nordpol"]
+  },
+  {
+    "canonicalModel": "Polarstern",
+    "season": "winter",
+    "articles": ["Polarstern "]
+  },
+  {
+    "canonicalModel": "Stiefel Filzi",
+    "season": "winter",
+    "articles": ["Stiefel Filzi"]
+  },
+  {
+    "canonicalModel": "Südpol",
+    "season": "winter",
+    "articles": ["Südpol"]
+  },
+  {
+    "canonicalModel": "warmer Wind",
+    "season": "winter",
+    "articles": ["warmer Wind"]
+  },
+  {
+    "canonicalModel": "Black Panther",
+    "season": "ganzjahr",
+    "articles": ["Black Panther"]
+  },
+  {
+    "canonicalModel": "Jaga Flex",
+    "season": "ganzjahr",
+    "articles": ["Jaga Flex"]
+  },
+  {
+    "canonicalModel": "Kommod Classic",
+    "season": "ganzjahr",
+    "articles": ["Kommod Classic"]
+  },
+  {
+    "canonicalModel": "Kommod Flex",
+    "season": "ganzjahr",
+    "articles": ["Kommod Flex", "Kommod Flex Vario"]
+  },
+  {
+    "canonicalModel": "Lady JaJa",
+    "season": "ganzjahr",
+    "articles": ["Lady JaJa"]
+  },
+  {
+    "canonicalModel": "Lerche",
+    "season": "ganzjahr",
+    "articles": ["Lerche"]
+  },
+  {
+    "canonicalModel": "Lord Slane Flex",
+    "season": "ganzjahr",
+    "articles": ["Lord Slane Flex"]
+  },
+  {
+    "canonicalModel": "Mustang",
+    "season": "ganzjahr",
+    "articles": ["Mustang"]
+  },
+  {
+    "canonicalModel": "Phönix",
+    "season": "ganzjahr",
+    "articles": ["Phönix", "Phönix mit Vario-Fußbett"]
+  },
+  {
+    "canonicalModel": "Rosa Lux",
+    "season": "ganzjahr",
+    "articles": ["Rosa Lux"]
+  },
+  {
+    "canonicalModel": "Rückenwind",
+    "season": "ganzjahr",
+    "articles": ["Rückenwind", "Rückenwind Vegan"]
+  },
+  {
+    "canonicalModel": "Sommertramper",
+    "season": "ganzjahr",
+    "articles": ["Sommertramper"]
+  },
+  {
+    "canonicalModel": "VIA Andante",
+    "season": "ganzjahr",
+    "articles": ["VIA Andante"]
+  },
+  {
+    "canonicalModel": "ViaVia",
+    "season": "ganzjahr",
+    "articles": ["ViaVia"]
+  },
+  {
+    "canonicalModel": "Wind",
+    "season": "ganzjahr",
+    "articles": ["Wind"]
+  },
+  {
+    "canonicalModel": "Wirbelwind",
+    "season": "ganzjahr",
+    "articles": ["Wirbelwind", "Wirbelwind Vegan"]
+  },
+  {
+    "canonicalModel": "28er Flex",
+    "season": "sommer",
+    "articles": ["28er Flex"]
+  },
+  {
+    "canonicalModel": "Air Danubia",
+    "season": "sommer",
+    "articles": ["Air Danubia"]
+  },
+  {
+    "canonicalModel": "Air Danubius",
+    "season": "sommer",
+    "articles": ["Air Danubius"]
+  },
+  {
+    "canonicalModel": "Air Line",
+    "season": "sommer",
+    "articles": ["Air Line"]
+  },
+  {
+    "canonicalModel": "Alles Klar",
+    "season": "sommer",
+    "articles": ["Alles Klar"]
+  },
+  {
+    "canonicalModel": "Alpaka-Schuheinlagen",
+    "season": "sommer",
+    "articles": ["Alpaka-Schuheinlagen"]
+  },
+  {
+    "canonicalModel": "Ansa",
+    "season": "sommer",
+    "articles": ["Ansa"]
+  },
+  {
+    "canonicalModel": "Aufwind",
+    "season": "sommer",
+    "articles": ["Aufwind"]
+  },
+  {
+    "canonicalModel": "Balla",
+    "season": "sommer",
+    "articles": ["Balla"]
+  },
+  {
+    "canonicalModel": "Butterfly",
+    "season": "sommer",
+    "articles": ["Butterfly"]
+  },
+  {
+    "canonicalModel": "Clea",
+    "season": "sommer",
+    "articles": ["Clea"]
+  },
+  {
+    "canonicalModel": "Clea mit Vario-Fußbett",
+    "season": "sommer",
+    "articles": ["Clea mit Vario-Fußbett"]
+  },
+  {
+    "canonicalModel": "Danubia Einlagen",
+    "season": "sommer",
+    "articles": ["Danubia Einlagen"]
+  },
+  {
+    "canonicalModel": "Dreifuss-Fuß",
+    "season": "sommer",
+    "articles": ["Dreifuss-Fuß"]
+  },
+  {
+    "canonicalModel": "Einkaufsnetz",
+    "season": "sommer",
+    "articles": ["Einkaufsnetz"]
+  },
+  {
+    "canonicalModel": "Einlegsohlen",
+    "season": "sommer",
+    "articles": ["Einlegsohlen"]
+  },
+  {
+    "canonicalModel": "Einlegesohle Woollfilz",
+    "season": "sommer",
+    "articles": ["Einlegesohle Woollfilz"]
+  },
+  {
+    "canonicalModel": "Filz-Gartenschuh Hansl",
+    "season": "sommer",
+    "articles": ["Filz-Gartenschuh Hansl"]
+  },
+  {
+    "canonicalModel": "Filzpantoffel",
+    "season": "sommer",
+    "articles": ["Filzpantoffel"]
+  },
+  {
+    "canonicalModel": "Fraenze",
+    "season": "sommer",
+    "articles": ["Fraenze"]
+  },
+  {
+    "canonicalModel": "Frau Eder",
+    "season": "sommer",
+    "articles": ["Frau Eder"]
+  },
+  {
+    "canonicalModel": "Frau Ende",
+    "season": "sommer",
+    "articles": ["Frau Ende"]
+  },
+  {
+    "canonicalModel": "Frau Neuner",
+    "season": "sommer",
+    "articles": ["Frau Neuner"]
+  },
+  {
+    "canonicalModel": "Frau Schrems",
+    "season": "sommer",
+    "articles": ["Frau Schrems"]
+  },
+  {
+    "canonicalModel": "Frau Sommer",
+    "season": "sommer",
+    "articles": ["Frau Sommer"]
+  },
+  {
+    "canonicalModel": "Frau Wohle",
+    "season": "sommer",
+    "articles": ["Frau Wohle"]
+  },
+  {
+    "canonicalModel": "Fräulein Mai",
+    "season": "sommer",
+    "articles": ["Fräulein Mai"]
+  },
+  {
+    "canonicalModel": "G10 Chui",
+    "season": "sommer",
+    "articles": ["G10 Chui"]
+  },
+  {
+    "canonicalModel": "G10 DIKIDIK",
+    "season": "sommer",
+    "articles": ["G10 DIKIDIK"]
+  },
+  {
+    "canonicalModel": "G10 Ronja",
+    "season": "sommer",
+    "articles": ["G10 Ronja"]
+  },
+  {
+    "canonicalModel": "G10 Twiga",
+    "season": "sommer",
+    "articles": ["G10 Twiga"]
+  },
+  {
+    "canonicalModel": "G10 Twinni",
+    "season": "sommer",
+    "articles": ["G10 Twinni"]
+  },
+  {
+    "canonicalModel": "G10 Wingu 35-40",
+    "season": "sommer",
+    "articles": ["G10 Wingu 35-40"]
+  },
+  {
+    "canonicalModel": "GGG Art 1",
+    "season": "sommer",
+    "articles": ["GGG Art 1"]
+  },
+  {
+    "canonicalModel": "GGG Art 2",
+    "season": "sommer",
+    "articles": ["GGG Art 2"]
+  },
+  {
+    "canonicalModel": "GGG Art 7",
+    "season": "sommer",
+    "articles": ["GGG Art 7"]
+  },
+  {
+    "canonicalModel": "GGG Art 8",
+    "season": "sommer",
+    "articles": ["GGG Art 8"]
+  },
+  {
+    "canonicalModel": "GGG Art M1",
+    "season": "sommer",
+    "articles": ["GGG Art M1"]
+  },
+  {
+    "canonicalModel": "GGG Art S1",
+    "season": "sommer",
+    "articles": ["GGG Art S1"]
+  },
+  {
+    "canonicalModel": "GGG Art S2",
+    "season": "sommer",
+    "articles": ["GGG Art S2"]
+  },
+  {
+    "canonicalModel": "GGG Art S2m",
+    "season": "sommer",
+    "articles": ["GGG Art S2m"]
+  },
+  {
+    "canonicalModel": "GGG Little Trampa",
+    "season": "sommer",
+    "articles": ["GGG Little Trampa"]
+  },
+  {
+    "canonicalModel": "GN Fußmatte",
+    "season": "sommer",
+    "articles": ["GN Fußmatte"]
+  },
+  {
+    "canonicalModel": "GN Hoppala",
+    "season": "sommer",
+    "articles": ["GN Hoppala"]
+  },
+  {
+    "canonicalModel": "GN Putzfilzschuh",
+    "season": "sommer",
+    "articles": ["GN Putzfilzschuh"]
+  },
+  {
+    "canonicalModel": "GN Steigbügel",
+    "season": "sommer",
+    "articles": ["GN Steigbügel"]
+  },
+  {
+    "canonicalModel": "Hausziege",
+    "season": "sommer",
+    "articles": ["Hausziege"]
+  },
+  {
+    "canonicalModel": "Herfort Stiefelknecht",
+    "season": "sommer",
+    "articles": ["Herfort Stiefelknecht"]
+  },
+  {
+    "canonicalModel": "Herr Eder",
+    "season": "sommer",
+    "articles": ["Herr Eder"]
+  },
+  {
+    "canonicalModel": "Herr Ende",
+    "season": "sommer",
+    "articles": ["Herr Ende"]
+  },
+  {
+    "canonicalModel": "Herr Neuner",
+    "season": "sommer",
+    "articles": ["Herr Neuner"]
+  },
+  {
+    "canonicalModel": "Herr Schrems",
+    "season": "sommer",
+    "articles": ["Herr Schrems"]
+  },
+  {
+    "canonicalModel": "Herr Sommer",
+    "season": "sommer",
+    "articles": ["Herr Sommer"]
+  },
+  {
+    "canonicalModel": "Herr Wohle",
+    "season": "sommer",
+    "articles": ["Herr Wohle"]
+  },
+  {
+    "canonicalModel": "Herrin Schrems",
+    "season": "sommer",
+    "articles": ["Herrin Schrems"]
+  },
+  {
+    "canonicalModel": "Jetz 4EA",
+    "season": "sommer",
+    "articles": ["Jetz 4EA"]
+  },
+  {
+    "canonicalModel": "Klax",
+    "season": "sommer",
+    "articles": ["Klax"]
+  },
+  {
+    "canonicalModel": "Klox",
+    "season": "sommer",
+    "articles": ["Klox"]
+  },
+  {
+    "canonicalModel": "Königsadler",
+    "season": "sommer",
+    "articles": ["Königsadler"]
+  },
+  {
+    "canonicalModel": "Könixkind",
+    "season": "sommer",
+    "articles": ["Könixkind"]
+  },
+  {
+    "canonicalModel": "Lady Free",
+    "season": "sommer",
+    "articles": ["Lady Free"]
+  },
+  {
+    "canonicalModel": "Lucy in the Sky Damen",
+    "season": "sommer",
+    "articles": ["Lucy in the Sky Damen"]
+  },
+  {
+    "canonicalModel": "Lucy in the Sky Herren",
+    "season": "sommer",
+    "articles": ["Lucy in the Sky Herren"]
+  },
+  {
+    "canonicalModel": "Madame Wunder",
+    "season": "sommer",
+    "articles": ["Madame Wunder"]
+  },
+  {
+    "canonicalModel": "Madame Wunder 21",
+    "season": "sommer",
+    "articles": ["Madame Wunder 21"]
+  },
+  {
+    "canonicalModel": "Maria Luft",
+    "season": "sommer",
+    "articles": ["Maria Luft"]
+  },
+  {
+    "canonicalModel": "Plüschfilz-Hausschuh Mai",
+    "season": "sommer",
+    "articles": ["Plüschfilz-Hausschuh Mai"]
+  },
+  {
+    "canonicalModel": "Rina",
+    "season": "sommer",
+    "articles": ["Rina"]
+  },
+  {
+    "canonicalModel": "Romy",
+    "season": "sommer",
+    "articles": ["Romy"]
+  },
+  {
+    "canonicalModel": "Ronny",
+    "season": "sommer",
+    "articles": ["Ronny"]
+  },
+  {
+    "canonicalModel": "Schnee",
+    "season": "sommer",
+    "articles": ["Schnee"]
+  },
+  {
+    "canonicalModel": "Schuhband",
+    "season": "sommer",
+    "articles": ["Schuhband"]
+  },
+  {
+    "canonicalModel": "Schuhband 120 cm",
+    "season": "sommer",
+    "articles": ["Schuhband 120 cm"]
+  },
+  {
+    "canonicalModel": "Schuhband 180 cm",
+    "season": "sommer",
+    "articles": ["Schuhband 180 cm"]
+  },
+  {
+    "canonicalModel": "Schuhband 70 cm",
+    "season": "sommer",
+    "articles": ["Schuhband 70 cm"]
+  },
+  {
+    "canonicalModel": "Schuhband 80 cm",
+    "season": "sommer",
+    "articles": ["Schuhband 80 cm"]
+  },
+  {
+    "canonicalModel": "Schuhlöffel",
+    "season": "sommer",
+    "articles": ["Schuhlöffel"]
+  },
+  {
+    "canonicalModel": "Schuhspende - Kinder in Not",
+    "season": "sommer",
+    "articles": ["Schuhspende - Kinder in Not"]
+  },
+  {
+    "canonicalModel": "Schuhspende  50",
+    "season": "sommer",
+    "articles": ["Schuhspende \u0080 50"]
+  },
+  {
+    "canonicalModel": "Schuhstrecker",
+    "season": "sommer",
+    "articles": ["Schuhstrecker"]
+  },
+  {
+    "canonicalModel": "Sommerjaga",
+    "season": "sommer",
+    "articles": ["Sommerjaga"]
+  },
+  {
+    "canonicalModel": "Sommerphönix",
+    "season": "sommer",
+    "articles": ["Sommerphönix"]
+  },
+  {
+    "canonicalModel": "Sommersperber",
+    "season": "sommer",
+    "articles": ["Sommersperber"]
+  },
+  {
+    "canonicalModel": "Svjesta",
+    "season": "sommer",
+    "articles": ["Svjesta"]
+  },
+  {
+    "canonicalModel": "Tanzwunder",
+    "season": "sommer",
+    "articles": ["Tanzwunder"]
+  },
+  {
+    "canonicalModel": "Tramper Flex",
+    "season": "sommer",
+    "articles": ["Tramper Flex"]
+  },
+  {
+    "canonicalModel": "Tramper mit Vario-Fußbett",
+    "season": "sommer",
+    "articles": ["Tramper mit Vario-Fußbett"]
+  },
+  {
+    "canonicalModel": "Wilderer",
+    "season": "sommer",
+    "articles": ["Wilderer"]
+  },
+  {
+    "canonicalModel": "Wunder",
+    "season": "sommer",
+    "articles": ["Wunder"]
+  },
+  {
+    "canonicalModel": "Yoko",
+    "season": "sommer",
+    "articles": ["Yoko"]
+  }
+]
