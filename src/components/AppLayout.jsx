@@ -2,6 +2,10 @@ import PeriodSelector from "./PeriodSelector";
 import SectionNav from "./SectionNav";
 
 function AppLayout({ activeSection, onSectionChange, children, period, onPeriodChange, salesRange }) {
+  const footerText = import.meta.env.DEV
+    ? "CSV-Analyse laeuft lokal im Browser. DEV laedt Beispieldaten automatisch."
+    : "CSV-Analyse laeuft lokal im Browser. Hochgeladene Dateien bleiben auf dem Geraet.";
+
   return (
     <div style={{ backgroundColor: "#f7f7f7", minHeight: "100vh" }}>
       <header
@@ -43,7 +47,7 @@ function AppLayout({ activeSection, onSectionChange, children, period, onPeriodC
                 <div style={{ fontSize: "13px", color: "#666" }}>B2B Schuhhandel - Lager & Reorder</div>
               </div>
             </div>
-            <div style={{ minWidth: "420px", flex: 1 }}>
+            <div style={{ flex: "1 1 320px", minWidth: "280px" }}>
               <PeriodSelector period={period} onChange={onPeriodChange} salesRange={salesRange} />
             </div>
           </div>
@@ -56,7 +60,7 @@ function AppLayout({ activeSection, onSectionChange, children, period, onPeriodC
       </main>
 
       <footer style={{ padding: "12px 0", borderTop: "1px solid #e6e6e6", color: "#888" }}>
-        <div style={containerStyle}>Dev Mode: CSVs werden automatisch geladen (nur Entwicklung).</div>
+        <div style={containerStyle}>{footerText}</div>
       </footer>
     </div>
   );

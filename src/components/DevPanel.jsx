@@ -3,7 +3,7 @@ import { useState } from "react";
 function DevPanel({ title, children }) {
   const [open, setOpen] = useState(false);
 
-  if (process.env.NODE_ENV === "production") {
+  if (import.meta.env.PROD) {
     return null;
   }
 

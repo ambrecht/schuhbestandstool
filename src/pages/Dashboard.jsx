@@ -35,6 +35,8 @@ function Dashboard() {
   const {
     inventoryData: inventoryRawData,
     salesData: salesRawData,
+    inventorySource,
+    salesSource,
     loadingInventory,
     loadingSales,
     errorInventory,
@@ -133,6 +135,13 @@ function Dashboard() {
     [kpis, effectivePeriod],
   );
   const lifecycleData = useMemo(() => computeLifecycleData(kpis, orderSuggestions), [kpis, orderSuggestions]);
+  const hasInventory = inventory.length > 0;
+  const hasSales = parsedSales.length > 0;
+  const readyForAnalysis = hasInventory && hasSales;
+  const missingSources = [];
+
+  if (!hasInventory) missingSources.push("Bestands-CSV");
+  if (!hasSales) missingSources.push("Verkaeufe-CSV");
 
   const [activeSection, setActiveSection] = useState("topSeller");
   const [focusFilters, setFocusFilters] = useState({});
@@ -162,56 +171,67 @@ function Dashboard() {
       salesRange={salesRange}
     >
       <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-        {activeSection === "topSeller" && (
-          <TopSellerView
-            rows={topSellerRows}
-            modelInsights={modelInsights}
-            focusFilters={focusFilters}
-            onClearFocus={clearFocus}
-            periodLabel={periodLabel}
-          />
+        <CSVUpload
+          onInventoryLoad={loadInventoryFile}
+          onSalesLoad={loadSalesFile}
+          inventoryData={inventoryRawData}
+          salesData={salesRawData}
+          inventorySource={inventorySource}
+          salesSource={salesSource}
+          loadingInventory={loadingInventory}
+          loadingSales={loadingSales}
+          errorInventory={errorInventory}
+          errorSales={errorSales}
+          readyForAnalysis={readyForAnalysis}
+          isDevMode={import.meta.env.DEV}
+        />
+
+        {!readyForAnalysis ? (
+          <PendingAnalysisState missingSources={missingSources} />
+        ) : (
+          <>
+            {activeSection === "topSeller" && (
+              <TopSellerView
+                rows={topSellerRows}
+                modelInsights={modelInsights}
+                focusFilters={focusFilters}
+                onClearFocus={clearFocus}
+                periodLabel={periodLabel}
+              />
+            )}
+
+            {activeSection === "models" && (
+              <ModelMatrixView
+                insights={modelInsights}
+                topSellerSkuSet={topSellerSkuSet}
+                focusFilters={focusFilters}
+                onClearFocus={clearFocus}
+                periodLabel={periodLabel}
+              />
+            )}
+
+            {activeSection === "sizes" && (
+              <SizeLastView
+                aggregates={sizeLastAggregates}
+                onSelectSize={handleSelectSize}
+                onSelectLast={handleSelectLast}
+                periodLabel={periodLabel}
+              />
+            )}
+
+            {activeSection === "colors" && (
+              <ColorView colors={colorAggregates} onSelectColor={handleSelectColor} periodLabel={periodLabel} />
+            )}
+
+            {activeSection === "orders" && (
+              <OrderListView suggestions={orderSuggestions} periodLabel={periodLabel} />
+            )}
+
+            {activeSection === "steering" && <LifecycleView data={lifecycleData} />}
+          </>
         )}
 
-        {activeSection === "models" && (
-          <ModelMatrixView
-            insights={modelInsights}
-            topSellerSkuSet={topSellerSkuSet}
-            focusFilters={focusFilters}
-            onClearFocus={clearFocus}
-            periodLabel={periodLabel}
-          />
-        )}
-
-        {activeSection === "sizes" && (
-          <SizeLastView
-            aggregates={sizeLastAggregates}
-            onSelectSize={handleSelectSize}
-            onSelectLast={handleSelectLast}
-            periodLabel={periodLabel}
-          />
-        )}
-
-        {activeSection === "colors" && (
-          <ColorView colors={colorAggregates} onSelectColor={handleSelectColor} periodLabel={periodLabel} />
-        )}
-
-        {activeSection === "orders" && (
-          <OrderListView suggestions={orderSuggestions} periodLabel={periodLabel} />
-        )}
-
-        {activeSection === "steering" && <LifecycleView data={lifecycleData} />}
-
-        <DevPanel title="CSV Upload">
-          <CSVUpload
-            onInventoryLoad={loadInventoryFile}
-            onSalesLoad={loadSalesFile}
-            inventoryData={inventoryRawData}
-            salesData={salesRawData}
-            loadingInventory={loadingInventory}
-            loadingSales={loadingSales}
-            errorInventory={errorInventory}
-            errorSales={errorSales}
-          />
+        <DevPanel title="Debug">
           <pre style={{ marginTop: "8px", fontSize: "12px", backgroundColor: "#f9fafb", padding: "8px" }}>
 {`Debug:
 Inventory: ${inventory.length}
@@ -222,6 +242,30 @@ KPI sample: ${JSON.stringify(kpis.slice(0, 2), null, 2)}`}
         </DevPanel>
       </div>
     </AppLayout>
+  );
+}
+
+function PendingAnalysisState({ missingSources }) {
+  return (
+    <section
+      style={{
+        backgroundColor: "#fff",
+        border: "1px dashed #d1d5db",
+        borderRadius: "16px",
+        padding: "24px",
+        boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+      }}
+    >
+      <div style={{ fontSize: "12px", textTransform: "uppercase", color: "#6b7280", letterSpacing: "0.08em", fontWeight: 700 }}>
+        Analyse ausstehend
+      </div>
+      <h2 style={{ margin: "6px 0 10px" }}>Bitte beide CSV-Dateien laden</h2>
+      <p style={{ margin: 0, color: "#4b5563", lineHeight: 1.5 }}>
+        Fuer die Produktionsanalyse werden ein aktueller Lagerbestand und die Verkaeufe benoetigt. Fehlend:
+        {" "}
+        <strong>{missingSources.join(", ")}</strong>.
+      </p>
+    </section>
   );
 }
 
